@@ -3,7 +3,7 @@ using System.Data;
 using Microsoft.SqlServer.Server;
 using System.Data.SqlTypes;
 
-class DateParser
+class DateTimeParser
 {
     [Microsoft.SqlServer.Server.SqlProcedure]
     public static SqlDateTime Parse(string text)
@@ -28,7 +28,7 @@ class DateParser
         }
         else
         {
-            return new SqlBoolean(true);
+            return new SqlBoolean(false);
         }
     }
 }

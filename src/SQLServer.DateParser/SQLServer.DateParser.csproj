@@ -7,7 +7,7 @@
     <ProjectGuid>{08BD7396-9F58-4CD9-9216-2A33E517B692}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SQLServer.DateParser</RootNamespace>
+    <RootNamespace>SQLServerDateParser</RootNamespace>
     <AssemblyName>SQLServer.DateParser</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

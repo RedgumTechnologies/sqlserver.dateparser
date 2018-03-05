@@ -4,7 +4,7 @@ using Microsoft.SqlServer.Server;
 using System.Data.SqlTypes;
 using System.Globalization;
 
-class DateTimeParser
+public class DateTimeParser
 {
     /// <summary>
     /// Converts the string representation of a date and time to its DateTime equivalent. If the string representation cannot be parsed, returns NULL

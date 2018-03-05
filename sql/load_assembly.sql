@@ -1,11 +1,32 @@
 
 -- Drop existing function and library
-IF EXISTS(SELECT * FROM sysobjects WHERE Name = 'dateTimeParser' AND Type = 'FS')
-DROP FUNCTION dbo.dateTimeParser
+IF EXISTS(SELECT * FROM sysobjects WHERE Name = 'dateTimeParse' AND Type = 'FS')
+DROP FUNCTION dbo.dateTimeParse
 GO
 
-drop assembly dateTimeParser
-go
+IF EXISTS(SELECT * FROM sysobjects WHERE Name = 'dateTimeTryParse' AND Type = 'FS')
+DROP FUNCTION dbo.dateTimeTryParse
+GO
+
+DROP ASSEMBLY dateTimeParser
+GO
+
+
+/* 
+-- Enable CLR for the SQL Server instance
+-- This only needs to be run once against the SQL Database
+-- More info, see https://docs.microsoft.com/en-us/sql/relational-databases/clr-integration/clr-integration-enabling
+
+sp_configure 'show advanced options', 1;  
+GO  
+RECONFIGURE;  
+GO  
+sp_configure 'clr enabled', 1;  
+GO  
+RECONFIGURE;  
+GO  
+
+*/
 
 /*
 -- For SQL Server 2017, need to allow unsigned assemblies
@@ -19,25 +40,43 @@ GO
 
 
 -- Create the asembly and the calling function
-CREATE ASSEMBLY dateTimeParser from 'D:\_git\OpenSource\SQLServer.DateTimeParser\src\SQLServer.DateTimeParser\bin\Release\SQLServer.DateTimeParser.dll' WITH PERMISSION_SET = SAFE  
+CREATE ASSEMBLY dateTimeParser from 'D:\_git\OpenSource\SQLServer.DateTimeParser\src\SQLServer.DateTimeParser\bin\Release\SQLServer.DateParser.dll' WITH PERMISSION_SET = SAFE  
 GO
 
 
-CREATE FUNCTION dbo.dateTimeParse(@text nvarchar(max))
-RETURNS DATETIME  
-EXTERNAL NAME SQLServer.DateParser.DateTimeParser.Parse 
-go
 
-CREATE FUNCTION dbo.dateTimeTryParse(@text nvarchar(max))
+CREATE FUNCTION dbo.dateTimeParse(@text nvarchar(max), @culture nvarchar(10) = '')
 RETURNS DATETIME  
-EXTERNAL NAME SQLServer.DateParser.DateTimeParser.TryParse 
-go
+WITH EXECUTE AS CALLER
+AS
+EXTERNAL NAME dateTimeParser.DateTimeParser.Parse 
+GO
+
+CREATE FUNCTION dbo.dateTimeTryParse(@text nvarchar(max), @culture nvarchar(10) = '')
+RETURNS BIT  
+WITH EXECUTE AS CALLER
+AS
+EXTERNAL NAME dateTimeParser.DateTimeParser.TryParse 
+GO
 
 
 
 -- Test the output to see if it works
 
--- Works
-SELECT dbo.dateParse('28Apr2018')
--- Returns null
-SELECT dbo.dateParse('tester')
+-- Parse using system culture
+SELECT dbo.dateTimeParse('28Apr2018', '')
+
+-- Parse using  explicit UK culture
+SELECT dbo.dateTimeParse('4/9/2018', 'en-GB')
+
+-- Parse using explicit US culture
+SELECT dbo.dateTimeParse('9/4/2018', 'en-US')
+
+-- Parse, returns null
+SELECT dbo.dateTimeParse('tester', '')
+
+-- TryParse using system culture, return 1/True
+SELECT dbo.dateTimeTryParse('28Apr2018', '')
+
+-- TryParse using system culture, return 0/False
+SELECT dbo.dateTimeTryParse('tester', '')

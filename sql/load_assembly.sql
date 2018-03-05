@@ -39,7 +39,7 @@ GO
 */  
 
 
--- Create the asembly and the calling function
+-- Create the assembly and the calling function
 CREATE ASSEMBLY dateTimeParser from 'D:\_git\OpenSource\SQLServer.DateTimeParser\src\SQLServer.DateTimeParser\bin\Release\SQLServer.DateParser.dll' WITH PERMISSION_SET = SAFE  
 GO
 
